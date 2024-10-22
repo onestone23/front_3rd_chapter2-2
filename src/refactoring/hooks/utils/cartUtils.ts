@@ -1,21 +1,37 @@
-import { CartItem, Coupon } from "../../../types";
+import { CartItem, Coupon } from '../../../types';
 
 export const calculateItemTotal = (item: CartItem) => {
-  return 0;
+  return (item.product.price - item.product.price * getMaxApplicableDiscount(item)) * item.quantity;
 };
 
 export const getMaxApplicableDiscount = (item: CartItem) => {
-  return 0;
+  return item.product.discounts.reduce(
+    (prev, cur) => (item.quantity >= cur.quantity ? Math.max(prev, cur.rate) : prev),
+    0
+  );
 };
 
 export const calculateCartTotal = (cart: CartItem[], selectedCoupon: Coupon | null) => {
+  const totalBeforeDiscount = cart.reduce((prev, cur) => cur.product.price * cur.quantity + prev, 0);
+  let totalAfterDiscount = cart.reduce((prev, cur) => prev + calculateItemTotal(cur), 0);
+  let totalDiscount = totalBeforeDiscount - totalAfterDiscount;
+
+  if (selectedCoupon) {
+    if (selectedCoupon.discountType === 'amount') {
+      totalAfterDiscount -= selectedCoupon.discountValue;
+    } else {
+      totalAfterDiscount -= totalAfterDiscount * (selectedCoupon.discountValue / 100);
+    }
+    totalDiscount = totalBeforeDiscount - totalAfterDiscount;
+  }
+
   return {
-    totalBeforeDiscount: 0,
-    totalAfterDiscount: 0,
-    totalDiscount: 0,
+    totalBeforeDiscount,
+    totalAfterDiscount,
+    totalDiscount,
   };
 };
 
 export const updateCartItemQuantity = (cart: CartItem[], productId: string, newQuantity: number): CartItem[] => {
-  return []
+  return [];
 };
