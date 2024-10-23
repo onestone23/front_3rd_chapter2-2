@@ -1,5 +1,5 @@
-import { CartItem, Coupon, Product } from '../../types.ts';
-import { useCart } from '../hooks';
+import { CartItem, Coupon, Product } from '../../../types.ts';
+import { useCart } from '../../hooks';
 
 interface Props {
   products: Product[];
@@ -24,11 +24,13 @@ export const CartPage = ({ products, coupons }: Props) => {
     const { discounts } = item.product;
     const { quantity } = item;
     let appliedDiscount = 0;
+
     for (const discount of discounts) {
       if (quantity >= discount.quantity) {
         appliedDiscount = Math.max(appliedDiscount, discount.rate);
       }
     }
+
     return appliedDiscount;
   };
 
