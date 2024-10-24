@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { CartPage } from '../../refactoring/components/CartPage/CartPage';
 import { AdminPage } from '../../refactoring/components/AdminPage/AdminPage';
@@ -229,6 +229,17 @@ describe('advanced > ', () => {
 
     test('새로운 hook 함수르 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
       expect(true).toBe(false);
+    });
+
+    describe('useLocalStorage', () => {
+      beforeEach(() => {
+        // 테스트 전 로컬스토리지 초기화
+        window.localStorage.clear();
+      });
+
+      test('초기 값이 저장되고 제대로 반환되는지', () => {});
+      test('값을 저장하면, 스토리지에 저장되는지', () => {});
+      test('제대로된 값을 읽어오는지', () => {});
     });
   });
 });
