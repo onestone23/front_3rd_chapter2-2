@@ -6,7 +6,7 @@ interface Props {
   addToCart: (product: Product) => void;
 }
 
-export const ProductItem = ({ product, remainingStock, addToCart }: Props) => {
+export const ProductListItem = ({ product, remainingStock, addToCart }: Props) => {
   const getMaxDiscount = (discounts: { quantity: number; rate: number }[]) => {
     return discounts.reduce((max, discount) => Math.max(max, discount.rate), 0);
   };

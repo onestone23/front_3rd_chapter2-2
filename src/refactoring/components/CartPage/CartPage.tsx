@@ -1,6 +1,7 @@
 import { CartItem, Coupon, Product } from '../../../types.ts';
 import { useCart } from '../../hooks';
-import { ProductList } from './ProductList.tsx';
+import { CartListItem } from './CartListItem.tsx';
+import { ProductListItem } from './ProductListItem.tsx';
 
 interface Props {
   products: Product[];
@@ -11,6 +12,11 @@ export const CartPage = ({ products, coupons }: Props) => {
   const { cart, addToCart, removeFromCart, updateQuantity, applyCoupon, calculateTotal, selectedCoupon } = useCart();
 
   const { totalBeforeDiscount, totalAfterDiscount, totalDiscount } = calculateTotal();
+
+  const getRemainingStock = (product: Product) => {
+    const cartItem = cart.find((item) => item.product.id === product.id);
+    return product.stock - (cartItem?.quantity || 0);
+  };
 
   const getAppliedDiscount = (item: CartItem) => {
     const { discounts } = item.product;
@@ -30,50 +36,26 @@ export const CartPage = ({ products, coupons }: Props) => {
     <div className='container mx-auto p-4'>
       <h1 className='text-3xl font-bold mb-6'>장바구니</h1>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-        <ProductList cart={cart} addToCart={addToCart} products={products} />
+        <div>
+          <h2 className='text-2xl font-semibold mb-4'>상품 목록</h2>
+          <div className='space-y-2'>
+            {products.map((product) => (
+              <ProductListItem product={product} remainingStock={getRemainingStock(product)} addToCart={addToCart} />
+            ))}
+          </div>
+        </div>
         <div>
           <h2 className='text-2xl font-semibold mb-4'>장바구니 내역</h2>
-
           <div className='space-y-2'>
-            {cart.map((item) => {
-              const appliedDiscount = getAppliedDiscount(item);
-              return (
-                <div key={item.product.id} className='flex justify-between items-center bg-white p-3 rounded shadow'>
-                  <div>
-                    <span className='font-semibold'>{item.product.name}</span>
-                    <br />
-                    <span className='text-sm text-gray-600'>
-                      {item.product.price}원 x {item.quantity}
-                      {appliedDiscount > 0 && (
-                        <span className='text-green-600 ml-1'>({(appliedDiscount * 100).toFixed(0)}% 할인 적용)</span>
-                      )}
-                    </span>
-                  </div>
-                  <div>
-                    <button
-                      onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                      className='bg-gray-300 text-gray-800 px-2 py-1 rounded mr-1 hover:bg-gray-400'
-                    >
-                      -
-                    </button>
-                    <button
-                      onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                      className='bg-gray-300 text-gray-800 px-2 py-1 rounded mr-1 hover:bg-gray-400'
-                    >
-                      +
-                    </button>
-                    <button
-                      onClick={() => removeFromCart(item.product.id)}
-                      className='bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600'
-                    >
-                      삭제
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+            {cart.map((item) => (
+              <CartListItem
+                removeFromCart={removeFromCart}
+                appliedDiscount={getAppliedDiscount(item)}
+                item={item}
+                updateQuantity={updateQuantity}
+              />
+            ))}
           </div>
-
           <div className='mt-6 bg-white p-4 rounded shadow'>
             <h2 className='text-2xl font-semibold mb-2'>쿠폰 적용</h2>
             <select
