@@ -1,4 +1,21 @@
-import { CartItem, Coupon } from '../../../types';
+import { CartItem, Coupon, Product } from '../../../types';
+
+export const addToCoupon = (coupons: Coupon[], coupon: Coupon): Coupon[] => {
+  return [...coupons, coupon];
+};
+
+export const addToCartItem = (cart: CartItem[], product: Product) => {
+  const findItem = cart.find((item) => item.product.id === product.id);
+  if (findItem) {
+    return cart.map((item) => (item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item));
+  } else {
+    return [...cart, { product: product, quantity: 1 }];
+  }
+};
+
+export const removeCartItem = (cart: CartItem[], productId: string): CartItem[] => {
+  return cart.filter((item) => item.product.id !== productId);
+};
 
 export const calculateItemTotal = (item: CartItem) => {
   return (item.product.price - item.product.price * getMaxApplicableDiscount(item)) * item.quantity;

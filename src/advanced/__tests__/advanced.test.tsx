@@ -3,8 +3,9 @@ import { beforeEach, describe, expect, test } from 'vitest';
 import { act, fireEvent, render, renderHook, screen, within } from '@testing-library/react';
 import { CartPage } from '../../refactoring/components/CartPage/CartPage';
 import { AdminPage } from '../../refactoring/components/AdminPage/AdminPage';
-import { Coupon, Product } from '../../types';
+import { CartItem, Coupon, Product } from '../../types';
 import { useLocalStorage } from '../../refactoring/hooks/useLocalStorage';
+import { addToCartItem, addToCoupon, removeCartItem } from '../../refactoring/hooks/utils/cartUtils';
 
 const mockProducts: Product[] = [
   {
@@ -224,14 +225,6 @@ describe('advanced > ', () => {
   });
 
   describe('자유롭게 작성해보세요.', () => {
-    test('새로운 유틸 함수를 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
-      expect(true).toBe(false);
-    });
-
-    test('새로운 hook 함수르 만든 후에 테스트 코드를 작성해서 실행해보세요', () => {
-      expect(true).toBe(false);
-    });
-
     describe('useLocalStorage', () => {
       beforeEach(() => {
         // 테스트 전 로컬스토리지 초기화
@@ -264,5 +257,57 @@ describe('advanced > ', () => {
         expect(result.current[0]).toBe('안녕');
       });
     });
+
+    describe('함수 테스트', () => {
+      const product: Product = { id: '1', name: 'Test Product', price: 100, stock: 10, discounts: [] };
+      const cart: CartItem[] = [{ product, quantity: 1 }];
+
+      describe('addToCartItem', () => {
+        test('새로운 상품 추가', () => {
+          const newProduct: Product = { id: '2', name: 'New Product', price: 150, stock: 10, discounts: [] };
+          const updatedCart = addToCartItem(cart, newProduct);
+          expect(updatedCart[1]).toEqual({ product: newProduct, quantity: 1 });
+        });
+
+        test('기존 상품 증가', () => {
+          const updatedCart = addToCartItem(cart, product);
+          expect(updatedCart).toEqual([{ product, quantity: 2 }]);
+        });
+      });
+
+      describe('removeCartItem', () => {
+        test('지정된 상품 제거', () => {
+          const updatedCart = removeCartItem(cart, '1');
+          expect(updatedCart).toEqual([]);
+        });
+
+        test('존재하지 않는 상품 제거시 변동x', () => {
+          const updatedCart = removeCartItem(cart, '2');
+          expect(updatedCart).toEqual(cart);
+        });
+      });
+
+      describe('addToCoupon', () => {
+        const coupons: Coupon[] = [
+          { name: 'Test1', code: 'Test1', discountType: 'amount', discountValue: 5000 },
+          { name: 'Test2', code: 'Test2', discountType: 'percentage', discountValue: 3 },
+        ];
+
+        const newCoupon: Coupon = { name: 'Test3', code: 'Test3', discountType: 'amount', discountValue: 5000 };
+
+        test('새로운 쿠폰을 추가', () => {
+          const updatedCoupons = addToCoupon(coupons, newCoupon);
+          expect(updatedCoupons).toEqual([...coupons, newCoupon]);
+        });
+
+        test('기존 쿠폰이 유지', () => {
+          const updatedCoupons = addToCoupon(coupons, newCoupon);
+          expect(updatedCoupons.length).toBe(coupons.length + 1);
+        });
+      });
+    });
+    // describe('',()=>{})
+    // describe('',()=>{})
+    // describe('',()=>{})
   });
 });
