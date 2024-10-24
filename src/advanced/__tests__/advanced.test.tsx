@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { beforeEach, describe, expect, test } from 'vitest';
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, renderHook, screen, within } from '@testing-library/react';
 import { CartPage } from '../../refactoring/components/CartPage/CartPage';
 import { AdminPage } from '../../refactoring/components/AdminPage/AdminPage';
 import { Coupon, Product } from '../../types';
+import { useLocalStorage } from '../../refactoring/hooks/useLocalStorage';
 
 const mockProducts: Product[] = [
   {
@@ -237,9 +238,31 @@ describe('advanced > ', () => {
         window.localStorage.clear();
       });
 
-      test('초기 값이 저장되고 제대로 반환되는지', () => {});
-      test('값을 저장하면, 스토리지에 저장되는지', () => {});
-      test('제대로된 값을 읽어오는지', () => {});
+      test('초기 값이 저장되고 제대로 반환되는지', () => {
+        const { result } = renderHook(() => useLocalStorage<string>('test', 'value'));
+        expect(result.current[0]).toBe('value');
+      });
+
+      test('초기 값을 저장하지 않았을때 값이 없는지', () => {
+        const { result } = renderHook(() => useLocalStorage('test'));
+
+        expect(!!result.current[0]).toBe(false);
+      });
+
+      test('초기 값이 저장되고 제대로 반환되는지', () => {
+        const { result } = renderHook(() => useLocalStorage<string>('test', 'value'));
+        expect(result.current[0], 'test');
+      });
+
+      test('값을 저장하면, 스토리지에 저장되고 제대로 읽어오는지', () => {
+        const { result } = renderHook(() => useLocalStorage<string>('test'));
+
+        act(() => {
+          result.current[1]('안녕'); // 이전 값에 1 더하기
+        });
+
+        expect(result.current[0]).toBe('안녕');
+      });
     });
   });
 });
