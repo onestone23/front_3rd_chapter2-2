@@ -9,7 +9,7 @@ interface Props {
 
 export const CartListItem = ({ item, appliedDiscount, updateQuantity, removeFromCart }: Props) => {
   return (
-    <div key={item.product.id} className='flex justify-between items-center bg-white p-3 rounded shadow'>
+    <div className='flex justify-between items-center bg-white p-3 rounded shadow'>
       <div>
         <span className='font-semibold'>{item.product.name}</span>
         <br />

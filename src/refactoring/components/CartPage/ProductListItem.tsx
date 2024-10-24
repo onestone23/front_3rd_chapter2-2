@@ -12,7 +12,7 @@ export const ProductListItem = ({ product, remainingStock, addToCart }: Props) =
   };
 
   return (
-    <div key={product.id} data-testid={`product-${product.id}`} className='bg-white p-3 rounded shadow'>
+    <div data-testid={`product-${product.id}`} className='bg-white p-3 rounded shadow'>
       <div className='flex justify-between items-center mb-2'>
         <span className='font-semibold'>{product.name}</span>
         <span className='text-gray-600'>{product.price.toLocaleString()}원</span>

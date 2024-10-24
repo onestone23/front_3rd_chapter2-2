@@ -40,7 +40,12 @@ export const CartPage = ({ products, coupons }: Props) => {
           <h2 className='text-2xl font-semibold mb-4'>상품 목록</h2>
           <div className='space-y-2'>
             {products.map((product) => (
-              <ProductListItem product={product} remainingStock={getRemainingStock(product)} addToCart={addToCart} />
+              <ProductListItem
+                key={product.id}
+                product={product}
+                remainingStock={getRemainingStock(product)}
+                addToCart={addToCart}
+              />
             ))}
           </div>
         </div>
@@ -49,6 +54,7 @@ export const CartPage = ({ products, coupons }: Props) => {
           <div className='space-y-2'>
             {cart.map((item) => (
               <CartListItem
+                key={item.product.id}
                 removeFromCart={removeFromCart}
                 appliedDiscount={getAppliedDiscount(item)}
                 item={item}
